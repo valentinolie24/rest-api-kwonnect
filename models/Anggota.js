@@ -48,4 +48,4 @@ const anggotaSchema = mongoose.Schema({
     versionKey: false
 })
 
-module.export = mongoose.model('Anggota', anggotaSchema, 'anggota')
+module.exports = mongoose.model('Anggota', anggotaSchema, 'anggota')
