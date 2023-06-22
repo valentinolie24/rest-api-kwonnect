@@ -18,7 +18,7 @@ const anggotaRoutes = require('./routes/anggota')
 app.use('/anggota', anggotaRoutes)
 
 app.get('/', (req, res) => {
-  res.send('Hello World!')
+  res.send('Selamat datang di KwonNect REST API!')
 })
 
 mongoose.connect(process.env.DB_CONNECTION, {
