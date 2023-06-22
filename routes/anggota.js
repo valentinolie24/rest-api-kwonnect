@@ -19,7 +19,22 @@ function result(succ, msg, details) {
 
 router.get('/', async (req, res) => {
   try {
-    const anggota = await Anggota.find({});
+    const post = await Post.aggregate([{
+      $lookup: {
+          from: 'user',
+          localField: 'user_id',
+          foreignField: '_id',
+          as: 'userData'
+        }
+      },
+      {
+        $project: {
+            userData: 0,
+            _id: 0
+        }
+      }
+    ])
+
     if (anggota.length > 0) {
       res.status(200).json(result(1, 'Retrieve Data Success', anggota));
     } else {
@@ -52,8 +67,9 @@ router.post('/', async (req, res) => {
   }
 });
 
-router.put('/:id', async (req, res) => {
+router.put('/', async (req, res) => {
   const data = {
+    id: req.body.id,
     foto: req.body.foto,
     email: req.body.email,
     nama: req.body.nama,
@@ -67,8 +83,11 @@ router.put('/:id', async (req, res) => {
     nomor_whatsapp: req.body.nomor_whatsapp
   };
   try {
-    const anggota = await Anggota.findByIdAndUpdate(req.params.id, data);
-    if (anggota) {
+    const post = await Post.updateOne({ 
+      _id: data.id,
+    }, data)
+
+    if (anggota.matchedCount > 0) {
       res.status(200).json(result(1, 'Updated Anggota Success!'));
     } else {
       res.status(404).json(result(0, 'Anggota not found!'));
@@ -80,8 +99,11 @@ router.put('/:id', async (req, res) => {
 
 router.delete('/:id', async (req, res) => {
   try {
-    const anggota = await Anggota.findByIdAndDelete(req.params.id);
-    if (anggota) {
+    const post = await Post.deleteOne({
+      _id: req.params.id
+    })
+
+    if (anggota.deletedCount > 0) {
       res.status(200).json(result(1, 'Deleted Anggota Success!'));
     } else {
       res.status(404).json(result(0, 'Anggota not found!'));
